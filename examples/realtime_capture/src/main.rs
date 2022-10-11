@@ -9,11 +9,12 @@ fn main() {
         .set_frame_rate(90)
         .set_sensor_mode(7)
         .set_shutter_speed(15000)
-        .open(true);
+        .open(true)
+        .unwrap();
     let mut start = Instant::now();
     let mut counter = 0;
     loop {
-        let data = camera.grab();
+        let data = camera.grab().unwrap();
         counter += 1;
         if Instant::now().duration_since(start) > Duration::from_secs(1) {
             println!("{counter} FPS");

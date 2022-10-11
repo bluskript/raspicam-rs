@@ -30,10 +30,22 @@ pub use autocxx_ffi_default_gen::ffi::raspicam as bindings;
 use core::slice;
 #[cfg(feature = "opencv")]
 use opencv::prelude::Mat;
+use thiserror::Error;
 pub mod binding_generator;
 
 pub struct RaspiCam {
     pub obj: UniquePtr<bindings::RaspiCam>,
+}
+
+#[derive(Error, Debug)]
+pub enum CameraError {
+    #[error("camera must be open before capturing")]
+    CameraNotOpen,
+    #[error("camera open fail")]
+    CameraOpenFail,
+    #[cfg(feature = "opencv")]
+    #[error("opencv error")]
+    OpenCVError(#[from] opencv::Error),
 }
 
 impl RaspiCam {
@@ -47,8 +59,14 @@ impl RaspiCam {
     /// Opens the `RaspiCam` camera
     ///
     /// `start_capture` determines if camera must start capture or not
-    pub fn open(&mut self, start_capture: bool) {
-        self.obj.pin_mut().open(start_capture);
+    /// # Errors
+    /// This function can fail if the camera is already open
+    pub fn open(&mut self, start_capture: bool) -> Result<(), CameraError> {
+        if self.obj.pin_mut().open(start_capture) {
+            Ok(())
+        } else {
+            Err(CameraError::CameraOpenFail)
+        }
     }
 
     /// Sets the camera format
@@ -177,29 +195,38 @@ impl RaspiCam {
         self
     }
 
-    pub fn grab_raw(&mut self) -> (*mut u8, usize) {
-        self.obj.pin_mut().grab();
-        (self.obj.getImageBufferData(), self.obj.getImageBufferSize())
+    /// # Errors
+    /// `grab_raw` can fail if the camera is not opened
+    /// This function can fail if the camera is not capturing
+    pub fn grab_raw(&mut self) -> Result<(*mut u8, usize), CameraError> {
+        if !self.obj.pin_mut().grab() {
+            return Err(CameraError::CameraNotOpen);
+        }
+        Ok((self.obj.getImageBufferData(), self.obj.getImageBufferSize()))
     }
 
-    pub fn grab(&mut self) -> &mut [u8] {
-        let (data, len) = self.grab_raw();
-        unsafe { slice::from_raw_parts_mut(data, len) }
+    /// # Errors
+    /// `grab` can fail if the camera is not opened
+    pub fn grab(&mut self) -> Result<&mut [u8], CameraError> {
+        let (data, len) = self.grab_raw()?;
+        Ok(unsafe { slice::from_raw_parts_mut(data, len) })
     }
 
     #[cfg(feature = "opencv")]
     /// # Errors
     /// `grab_image_mat` can return any error that [`Mat::new_nd_with_data`](https://docs.rs/opencv/latest/opencv/core/struct.Mat.html#method.new_nd_with_data) could return
-    pub fn grab_image_mat(&mut self) -> opencv::Result<Mat> {
+    /// It could also fail if the camera is not opened
+    pub fn grab_image_mat(&mut self) -> Result<Mat, CameraError> {
         use opencv::core::CV_8UC3;
 
         unsafe {
             Mat::new_nd_with_data(
                 &[self.obj.getWidth().0 as i32, self.obj.getHeight().0 as i32],
                 CV_8UC3,
-                self.grab().as_mut_ptr().cast::<std::ffi::c_void>(),
+                self.grab()?.as_mut_ptr().cast::<std::ffi::c_void>(),
                 None,
             )
+            .map_err(CameraError::OpenCVError)
         }
     }
 }

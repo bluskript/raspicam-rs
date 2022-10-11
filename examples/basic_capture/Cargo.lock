@@ -658,13 +658,14 @@ dependencies = [
 
 [[package]]
 name = "raspicam-rs"
-version = "0.1.0"
+version = "0.1.2"
 dependencies = [
  "autocxx",
  "autocxx-build",
  "cxx",
  "cxx-build",
  "opencv",
+ "thiserror",
 ]
 
 [[package]]

@@ -1,6 +1,6 @@
 [package]
 name = "raspicam-rs"
-version = "0.1.1"
+version = "0.1.2"
 description = "Pragmatic Rust bindings to the raspicam C++ library"
 license = "MIT"
 edition = "2021"
@@ -16,6 +16,7 @@ cxx-build = "1.0.76"
 autocxx = "0.22.4"
 cxx = "1.0.78"
 opencv = { version = "0.70.0", optional = true }
+thiserror = "1.0.37"
 
 [features]
 opencv = ["dep:opencv"]
