@@ -1,6 +1,6 @@
 [package]
 name = "raspicam-rs"
-version = "0.1.0"
+version = "0.1.1"
 description = "Pragmatic Rust bindings to the raspicam C++ library"
 license = "MIT"
 edition = "2021"

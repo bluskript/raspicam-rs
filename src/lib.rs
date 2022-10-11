@@ -1,5 +1,29 @@
 #![warn(clippy::pedantic, clippy::nursery)]
 
+//! # raspicam.rs
+//! Abstraction documentation available at [`RaspiCam`](raspicam_rs::RaspiCam)
+//! Example usage:
+//! ```rs
+//! use opencv::core::Vector;
+//! use raspicam_rs::{
+//!     bindings::{RASPICAM_EXPOSURE, RASPICAM_FORMAT},
+//!     RaspiCam,
+//! };
+//!
+//! fn main() {
+//!     RaspiCam::new();
+//!     let mut raspicam = raspicam_rs::RaspiCam::new();
+//!     raspicam
+//!         .set_brightness(50)
+//!         .set_contrast(0)
+//!         .set_format(RASPICAM_FORMAT::RASPICAM_FORMAT_RGB)
+//!         .open(true);
+//!     let frame = raspicam.grab_image_mat().unwrap();
+//!     opencv::imgcodecs::imwrite("./frame.png", &frame, &Vector::default()).unwrap();
+//! }
+//! ```
+//!
+
 use autocxx::prelude::*;
 pub mod autocxx_ffi_default_gen;
 pub use autocxx_ffi_default_gen::ffi::raspicam as bindings;
