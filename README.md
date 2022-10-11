@@ -1,6 +1,7 @@
 # raspicam-rs
 
-![docs.rs](https://img.shields.io/docsrs/raspicam-rs?style=for-the-badge)
+[![docs.rs](https://img.shields.io/docsrs/raspicam-rs?style=flat-square)](https://docs.rs/raspicam-rs/latest)
+[![Crates.io](https://img.shields.io/crates/d/raspicam-rs?style=flat-square)](https://crates.io/crates/raspicam-rs)
 
 Rust bindings to the amazing C++ [raspicam](https://github.com/cedricve/raspicam) library (with optional OpenCV utilities)!
 
