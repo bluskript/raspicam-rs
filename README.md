@@ -8,6 +8,24 @@ Rust bindings to the amazing C++ [raspicam](https://github.com/cedricve/raspicam
 This is a followup to a Rust-based robotics project I worked where high FPS low latency and full color
 support was a requirement: [ez-aquarii](https://github.com/Orion-Robotics/ez-aquarii/)
 
+## Requirements
+
+A prerequisite is you have to compile the `raspicam` library and install it. This repo has a install script for convenience that'll do everything for you:
+
+```
+curl https://raw.githubusercontent.com/bluskript/raspicam-rs/master/install.sh | sudo bash
+```
+
+Install dependencies:
+
+```
+sudo apt install clang libclang-dev
+```
+
+If you are using opencv integration, also install `libopencv-dev`
+
+---
+
 Example usage showing how to capture a single image and save it with OpenCV Rust bindings:
 
 ```rs
@@ -21,8 +39,8 @@ fn main() {
     RaspiCam::new();
     let mut raspicam = raspicam_rs::RaspiCam::new();
     raspicam
-        .set_brightness(50)
-        .set_contrast(0)
+        .set_capture_size(480, 480)
+        .set_frame_rate(90)
         .set_format(RASPICAM_FORMAT::RASPICAM_FORMAT_RGB)
         .open(true);
     let frame = raspicam.grab_image_mat().unwrap();
