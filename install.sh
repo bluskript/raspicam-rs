@@ -5,7 +5,7 @@ if [[ $UID != 0 ]]; then
 fi
 
 rm -rf ./raspicam-build
-git clone --depth 1 https://github.com/cedricve/raspicam
+git clone --depth 1 https://github.com/cedricve/raspicam raspicam-build
 cd raspicam-build
 mkdir build
 cd build
