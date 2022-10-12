@@ -14,7 +14,6 @@ support was a requirement: [ez-aquarii](https://github.com/Orion-Robotics/ez-aqu
 
 ---
 
-
 A prerequisite is you have to compile the `raspicam` library and install it. This repo has a install script for convenience that'll do everything for you:
 
 ```
@@ -28,13 +27,19 @@ sudo apt install clang libclang-dev
 ```
 
 If you are using opencv integration, also install `libopencv-dev`
+and enable the opencv feature in the crate:
+
+```rs
+raspicam-rs = { version = "0.1.2", features = ["opencv"] }
+opencv = "0.70.0"
+```
 
 ---
 
-Example usage showing how to capture a single image and save it with OpenCV Rust bindings:
+Example usage showing how to capture a single image and save it:
 
 ```rs
-use opencv::core::Vector;
+use image::RgbImage;
 use raspicam_rs::{
     bindings::{RASPICAM_EXPOSURE, RASPICAM_FORMAT},
     RaspiCam,
@@ -49,8 +54,8 @@ fn main() {
         .set_format(RASPICAM_FORMAT::RASPICAM_FORMAT_RGB)
         .open(true)
         .unwrap();
-    let frame = raspicam.grab_image_mat().unwrap();
-    opencv::imgcodecs::imwrite("./frame.png", &frame, &Vector::default()).unwrap();
+    let img = RgbImage::from_raw(480, 480, raspicam.grab().unwrap().to_vec()).unwrap();
+    img.save("frame.png").unwrap();
 }
 ```
 
