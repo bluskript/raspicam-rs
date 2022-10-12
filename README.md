@@ -8,7 +8,12 @@ Rust bindings to the amazing C++ [raspicam](https://github.com/cedricve/raspicam
 This is a followup to a Rust-based robotics project I worked where high FPS low latency and full color
 support was a requirement: [ez-aquarii](https://github.com/Orion-Robotics/ez-aquarii/)
 
-## Requirements
+## Prerequisites
+
+**You MUST be on a 32-bit install. The raspberry pi camera libraries do NOT work on a 64-bit installation. See: https://github.com/raspberrypi/userland/issues/688**
+
+---
+
 
 A prerequisite is you have to compile the `raspicam` library and install it. This repo has a install script for convenience that'll do everything for you:
 
